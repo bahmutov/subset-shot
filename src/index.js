@@ -57,7 +57,7 @@ function snapshot (what, schemaFormats) {
     line: ${line},
     column: ${column}
   `
-  debug(message)
+  debug('called from', message)
   let {specName, specSource, startLine} =
     getSpecFunction({file, line, column})
 
