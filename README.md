@@ -17,11 +17,11 @@ This is a sister project to [snap-shot](https://github.com/bahmutov/snap-shot) a
 
 Imagine you have an API returning list of Oscar-winning movies. At some point it returns
 N movie titles, including "Braveheart", "Titanic" and "The Artist" 
-(see example page [here](http://www.today.com/popculture/complete-list-every-best-picture-oscar-winner-ever-t107617))
+(see example page [here](http://www.today.com/popculture/complete-list-every-best-picture-oscar-winner-ever-t107617)).
 You write an end to end test and would like to use 
 [snapshot testing](https://facebook.github.io/jest/blog/2016/07/27/jest-14.html), but you cannot
-because at some point in February a new movie will be added and your snapshot will have to
-be updated.
+because at some point in February of the next year a new movie will be added and your 
+snapshot will have to be updated.
 
 This module solves this problem by allowing *future values* to be a superset of the saved snapshot.
 If API returns more movies - it is fine, as long as it returns all the ones already saved in the
@@ -72,6 +72,10 @@ it('Oscar movies', () => {
   subsetShot(list)
 })
 ```
+
+The test still passes. But a test that all of the sudden returns empty list or nothing, or
+a totally different set of movies (by confusing "Best Picture" with "Best Director" for example)
+fails.
 
 ## Updating snapshots
 
