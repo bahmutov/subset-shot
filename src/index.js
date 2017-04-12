@@ -9,6 +9,7 @@ const {strip} = require('./utils')
 const snapShotCore = require('snap-shot-core')
 const compare = require('./compare')
 const findTestCaller = require('find-test-caller')
+const {findIndex, propEq, last} = require('ramda')
 
 const isNode = Boolean(require('fs').existsSync)
 const isBrowser = !isNode
@@ -63,15 +64,21 @@ function snapshot (what, schemaFormats) {
   // maybe the "snapshot" function was part of composition
   // TODO handle arbitrary long chains by walking up to library code
   if (!specName) {
-    const caller = sites[3]
-    const file = caller.filename
-    const line = caller.line
-    const column = caller.column
-    debug('trying to get snapshot from %s %d,%d', file, line, column)
-    const out = getSpecFunction({file, line, column})
-    specName = out.specName
-    specSource = out.specSource
-    startLine = out.startLine
+    debug('looking for function name "snapshot" in the call chain')
+    debug(sites)
+
+    const snapshotAt = findIndex(propEq('functionName', 'snapshot'))(sites)
+    const caller = sites[snapshotAt + 1] || last(sites)
+    if (caller) {
+      const file = caller.filename
+      const line = caller.line
+      const column = caller.column
+      debug('trying to get snapshot from %s %d,%d', file, line, column)
+      const out = getSpecFunction({file, line, column})
+      specName = out.specName
+      specSource = out.specSource
+      startLine = out.startLine
+    }
   }
 
   if (!specName) {
