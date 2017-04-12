@@ -12,13 +12,10 @@ const findTestCaller = require('find-test-caller')
 
 const isNode = Boolean(require('fs').existsSync)
 const isBrowser = !isNode
-const isCypress = isBrowser && typeof cy === 'object'
 
 let fs
 if (isNode) {
   fs = require('./file-system')
-} else if (isCypress) {
-  fs = require('./cypress-system')
 } else {
   fs = require('./browser-system')
 }
