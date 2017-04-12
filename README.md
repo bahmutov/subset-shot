@@ -1,6 +1,6 @@
 # subset-shot
 
-> Snapshot testing where result can be a superset of snapshot
+> Snapshot testing where new value can be a superset of the saved snapshot
 
 [![NPM][npm-icon] ][npm-url]
 
@@ -8,15 +8,79 @@
 [![semantic-release][semantic-image] ][semantic-url]
 [![js-standard-style][standard-image]][standard-url]
 
+## Related
+
+This is a sister project to [snap-shot](https://github.com/bahmutov/snap-shot) and
+[schema-shot](https://github.com/bahmutov/schema-shot)
+
+## Why
+
+Imagine you have an API returning list of Oscar-winning movies. At some point it returns
+N movie titles, including "Braveheart", "Titanic" and "The Artist" 
+(see example page [here](http://www.today.com/popculture/complete-list-every-best-picture-oscar-winner-ever-t107617))
+You write an end to end test and would like to use 
+[snapshot testing](https://facebook.github.io/jest/blog/2016/07/27/jest-14.html), but you cannot
+because at some point in February a new movie will be added and your snapshot will have to
+be updated.
+
+This module solves this problem by allowing *future values* to be a superset of the saved snapshot.
+If API returns more movies - it is fine, as long as it returns all the ones already saved in the
+snapshot.
+
 ## Install
 
 Requires [Node](https://nodejs.org/en/) version 6 or above.
 
 ```sh
-npm install --save subset-shot
+npm install --save-dev subset-shot
 ```
 
 ## Use
+
+This module works using same [stack-walking, AST parsing magic](https://glebbahmutov.com/blog/snapshot-testing/)
+as [snap-shot](https://github.com/bahmutov/snap-shot) and 
+[schema-shot](https://github.com/bahmutov/schema-shot). This means, just use it in any testing
+framework (like Ava, Jest, etc)
+
+```js
+// movies-spec.js
+const subsetShot = require('subset-shot')
+it('Oscar movies', () => {
+  const list = ['Braveheart', 'Titanic']
+  subsetShot(list)
+})
+```
+
+The snapshot file will have contents
+
+```js
+// movies-spec.js.subset-shot
+exports['Oscar movies'] = [
+  'Braveheart', 
+  'Titanic'
+]
+```
+
+Later the API might return more movies, yet the same test still passes because the snapshot
+has subset of the new data.
+
+```js
+// movies-spec.js
+const subsetShot = require('subset-shot')
+it('Oscar movies', () => {
+  const list = ['Braveheart', 'Titanic', 'The Artist']
+  subsetShot(list)
+})
+```
+
+## Updating snapshots
+
+You can show the snapshots but skip saving them (dry run) by running tests with 
+environment variable `DRY=1 npm test`.
+
+You can show and save snapshots by running tests with environment variable `SHOW=1 npm test`.
+
+You can update saved snapshots by running tests with environment variable `UPDATE=1 npm test`.
 
 ### Small print
 

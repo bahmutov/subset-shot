@@ -26,7 +26,7 @@ const opts = {
   update: Boolean(process.env.UPDATE)
 }
 
-const SNAP_SHOT_EXTENSION = '.schema-shot'
+const SNAP_SHOT_EXTENSION = '.subset-shot'
 
 function getSpecFunction ({file, line}) {
   return findTestCaller({file, line, fs})
