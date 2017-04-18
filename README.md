@@ -86,6 +86,25 @@ You can show and save snapshots by running tests with environment variable `SHOW
 
 You can update saved snapshots by running tests with environment variable `UPDATE=1 npm test`.
 
+## Comparing objects
+
+A snapshot could be an object subset, compared using 
+[obj-subset](https://github.com/kvnneff/obj-subset).
+
+```js
+// saved snapshot is {foo: 42}
+const subsetShot = require('subset-shot')
+it('allows new properties', () => {
+  subsetShot({foo: 42, bar: 10}) // ok
+})
+it('requires value', () => {
+  subsetShot({foo: 20}) // exception, value should 42
+})
+it('requires matching key', () => {
+  subsetShot({foo2: 42}) // exception, wrong key name
+})
+```
+
 ### Small print
 
 Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2017
